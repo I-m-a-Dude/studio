@@ -10,6 +10,32 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle } from 'lucide-react';
 import { ViewerToolbar } from './viewer-toolbar';
 
+// From nifti-reader-js, because the export is problematic.
+const NIFTI_DATA_TYPE_MAP: Record<number, string> = {
+    0: 'NONE',
+    1: 'BINARY',
+    2: 'UINT8',
+    4: 'INT16',
+    8: 'INT32',
+    16: 'FLOAT32',
+    32: 'COMPLEX64',
+    64: 'FLOAT64',
+    128: 'RGB24',
+    255: 'ALL',
+    256: 'INT8',
+    512: 'UINT16',
+    768: 'UINT32',
+    1024: 'INT64',
+    1280: 'UINT64',
+    1536: 'FLOAT128',
+    1792: 'COMPLEX128',
+    2048: 'COMPLEX256',
+};
+function getDataType(code: number): string {
+    return NIFTI_DATA_TYPE_MAP[code] || 'UNKNOWN';
+}
+
+
 export function MriViewer() {
   const file = useMriStore((state) => state.file);
   const { slice, zoom, axis, setMaxSlices } = useViewStore();
@@ -94,7 +120,7 @@ export function MriViewer() {
             'Description': header.description,
             'Dimensions': header.dims,
             'Voxel Size': header.pixDims,
-            'Data Type': nifti.getNIFTIDataType(header.datatype),
+            'Data Type': getDataType(header.datatype),
             'Endianness': header.little_endian ? 'Little' : 'Big',
             'Calibration Max': header.cal_max,
             'Calibration Min': header.cal_min,
