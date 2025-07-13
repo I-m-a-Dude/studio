@@ -76,7 +76,7 @@ export function MriUploader() {
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           className={cn(
-            'relative w-full border-2 border-dashed rounded-lg p-12 text-center transition-colors duration-300',
+            'relative w-full border border-dashed rounded-lg p-12 text-center transition-colors duration-300',
             isDragging ? 'border-primary bg-accent' : 'border-border hover:border-primary'
           )}
         >
