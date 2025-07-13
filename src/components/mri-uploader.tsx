@@ -123,7 +123,7 @@ export function MriUploader() {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <Button onClick={handleNavigateToAnalysis} disabled={isNavigating} size="lg">
+          <Button onClick={handleNavigateToAnalysis} disabled={isNavigating} size="lg" className="rounded-full">
             {isNavigating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isNavigating ? 'Processing...' : 'Go to Analysis'}
           </Button>
