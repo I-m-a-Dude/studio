@@ -6,18 +6,21 @@ import { UploadCloud, File, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useMriStore } from '@/stores/mri-store';
 
 export function MriUploader() {
-  const [file, setFile] = useState<File | null>(null);
+  const setMriFile = useMriStore((state) => state.setFile);
+  const mriFile = useMriStore((state) => state.file);
+  
   const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
   const handleFile = (selectedFile: File | undefined | null) => {
     if (selectedFile) {
       if (selectedFile.name.endsWith('.nii') || selectedFile.name.endsWith('.nii.gz')) {
-        setFile(selectedFile);
+        setMriFile(selectedFile);
       } else {
         toast({
           title: 'Invalid File Type',
@@ -54,51 +57,19 @@ export function MriUploader() {
   };
 
   const handleRemoveFile = () => {
-    setFile(null);
+    setMriFile(null);
   };
 
   const handleNavigateToAnalysis = () => {
-    if (file) {
-      setIsUploading(true);
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          // Store file info and data URL in session storage
-          const fileInfo = {
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            dataUrl: reader.result as string,
-          };
-          sessionStorage.setItem('mriFile', JSON.stringify(fileInfo));
-          setIsUploading(false);
-          router.push('/analysis');
-        } catch (error) {
-           console.error("Error storing file in session storage:", error);
-           toast({
-              title: "Error",
-              description: "Could not store the file. It might be too large.",
-              variant: "destructive",
-           });
-           setIsUploading(false);
-        }
-      };
-      reader.onerror = () => {
-        console.error("Error reading file");
-        toast({
-          title: "Error Reading File",
-          description: "There was a problem reading your file.",
-          variant: "destructive",
-        });
-        setIsUploading(false);
-      };
-      reader.readAsDataURL(file);
+    if (mriFile) {
+      setIsNavigating(true);
+      router.push('/analysis');
     }
   };
 
   return (
     <div className="w-full">
-      {!file ? (
+      {!mriFile ? (
         <div
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
@@ -129,14 +100,14 @@ export function MriUploader() {
         <div className="w-full bg-card border rounded-lg p-6 flex flex-col items-center justify-center gap-4">
           <div className="flex items-center gap-3 bg-muted p-3 rounded-md w-full max-w-md">
             <File className="h-6 w-6 text-primary" />
-            <span className="font-mono text-sm truncate flex-1">{file.name}</span>
+            <span className="font-mono text-sm truncate flex-1">{mriFile.name}</span>
             <Button variant="ghost" size="icon" onClick={handleRemoveFile} className="h-8 w-8">
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <Button onClick={handleNavigateToAnalysis} disabled={isUploading} size="lg">
-            {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isUploading ? 'Processing...' : 'Go to Analysis'}
+          <Button onClick={handleNavigateToAnalysis} disabled={isNavigating} size="lg">
+            {isNavigating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isNavigating ? 'Processing...' : 'Go to Analysis'}
           </Button>
         </div>
       )}
