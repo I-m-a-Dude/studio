@@ -32,6 +32,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { HistogramChart } from './histogram-chart';
+import { ProfileCurveChart } from './profile-curve-chart';
 
 export function SegmentationControls() {
   const {
@@ -182,22 +184,36 @@ export function SegmentationControls() {
                 disabled={isDisabled}
               />
             </div>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-2"
-              onClick={() => setShowHistogram(!showHistogram)}
-              disabled={isDisabled}
-            >
-              <AreaChart className="h-4 w-4" /> Show Histogram
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-2"
-              onClick={() => setShowProfileCurves(!showProfileCurves)}
-              disabled={isDisabled}
-            >
-              <LineChart className="h-4 w-4" /> Show Profile Curves
-            </Button>
+            <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-2"
+                  onClick={() => setShowHistogram(!showHistogram)}
+                  disabled={isDisabled}
+                >
+                  <AreaChart className="h-4 w-4" /> Show Histogram
+                </Button>
+                {showHistogram && (
+                  <div className="h-40 w-full p-2 border rounded-md">
+                    <HistogramChart />
+                  </div>
+                )}
+            </div>
+             <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-2"
+                  onClick={() => setShowProfileCurves(!showProfileCurves)}
+                  disabled={isDisabled}
+                >
+                  <LineChart className="h-4 w-4" /> Show Profile Curves
+                </Button>
+                 {showProfileCurves && (
+                  <div className="h-40 w-full p-2 border rounded-md">
+                    <ProfileCurveChart />
+                  </div>
+                )}
+            </div>
           </div>
         </div>
         <Separator />

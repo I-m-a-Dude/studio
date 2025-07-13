@@ -5,6 +5,7 @@ import * as nifti from 'nifti-reader-js';
 import pako from 'pako';
 import { useMriStore } from '@/stores/mri-store';
 import { useViewStore, type ViewAxis } from '@/stores/view-store';
+import { useAnalysisStore } from '@/stores/analysis-store';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle } from 'lucide-react';
 import { ViewerToolbar } from './viewer-toolbar';
@@ -12,12 +13,51 @@ import { ViewerToolbar } from './viewer-toolbar';
 export function MriViewer() {
   const file = useMriStore((state) => state.file);
   const { slice, zoom, axis, setMaxSlices } = useViewStore();
+  const { setHistogramData, setProfileCurveData } = useAnalysisStore();
 
   const [niftiHeader, setNiftiHeader] = useState<nifti.NIFTI1 | nifti.NIFTI2 | null>(null);
   const [niftiImage, setNiftiImage] = useState<ArrayBuffer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const calculateAndSetChartData = (
+    header: nifti.NIFTI1 | nifti.NIFTI2,
+    image: ArrayBuffer
+  ) => {
+    // This is a simplified calculation for demonstration
+    // A real implementation would be more complex
+    const typedData = new Float32Array(image);
+
+    // Histogram Data
+    const histogram: { value: number; count: number }[] = [];
+    const intensityMap = new Map<number, number>();
+    const maxVal = header.cal_max > 0 ? header.cal_max : 1;
+    typedData.forEach((val) => {
+      const normalized = Math.round((val / maxVal) * 100);
+      intensityMap.set(normalized, (intensityMap.get(normalized) || 0) + 1);
+    });
+    intensityMap.forEach((count, value) => {
+      if (value >= 0 && value <= 100) { // Only show relevant range
+        histogram.push({ value, count });
+      }
+    });
+    setHistogramData(histogram.sort((a,b) => a.value - b.value));
+
+    // Profile Curve Data (horizontal line through middle of axial view)
+    const profile: { position: number; intensity: number }[] = [];
+    const dims = header.dims;
+    const middleSlice = Math.floor(dims[3] / 2);
+    const middleRow = Math.floor(dims[2] / 2);
+    const sliceSize = dims[1] * dims[2];
+
+    for (let i = 0; i < dims[1]; i++) {
+        const voxelIndex = i + (middleRow * dims[1]) + (middleSlice * sliceSize);
+        const pixelData = new Float32Array(image, voxelIndex * 4, 1);
+        profile.push({ position: i, intensity: pixelData[0] });
+    }
+    setProfileCurveData(profile);
+  };
 
   useEffect(() => {
     const loadNiftiFile = async () => {
@@ -48,6 +88,8 @@ export function MriViewer() {
             sagittal: header.dims[1],
             coronal: header.dims[2],
           });
+          
+          calculateAndSetChartData(header, image);
 
         } else {
           setError('The provided file is not a valid NIfTI file.');
@@ -61,7 +103,7 @@ export function MriViewer() {
     };
 
     loadNiftiFile();
-  }, [file, setMaxSlices]);
+  }, [file, setMaxSlices, setHistogramData, setProfileCurveData]);
   
   const drawSlice = (currentSlice: number, currentAxis: ViewAxis) => {
     if (!niftiHeader || !niftiImage || !canvasRef.current) return;
