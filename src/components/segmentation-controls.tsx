@@ -43,12 +43,14 @@ export function SegmentationControls() {
     showProfileCurves,
     brightness,
     contrast,
+    isCineMode,
     setMultiPlanarView,
     setThreeDReconstruction,
     setShowHistogram,
     setShowProfileCurves,
     setBrightness,
     setContrast,
+    setIsCineMode,
   } = useAnalysisStore();
 
   const file = useMriStore((state) => state.file);
@@ -229,6 +231,8 @@ export function SegmentationControls() {
               </Label>
               <Switch
                 id="cine-switch"
+                checked={isCineMode}
+                onCheckedChange={setIsCineMode}
                 disabled={isDisabled}
               />
             </div>
