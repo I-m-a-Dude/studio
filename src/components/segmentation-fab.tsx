@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Play, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 
 export function SegmentationFAB() {
     const [isSegmenting, setIsSegmenting] = useState(false);
@@ -30,12 +30,12 @@ export function SegmentationFAB() {
                         {isSegmenting ? (
                             <Loader2 className="h-6 w-6 animate-spin" />
                         ) : (
-                            <Play className="h-6 w-6" />
+                            <Sparkles className="h-6 w-6" />
                         )}
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Start Segmentation</p>
+                    <p>Start AI Segmentation</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
