@@ -7,6 +7,7 @@ import { useMriStore } from '@/stores/mri-store';
 import { useViewStore, type ViewAxis } from '@/stores/view-store';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle } from 'lucide-react';
+import { ViewerToolbar } from './viewer-toolbar';
 
 export function MriViewer() {
   const file = useMriStore((state) => state.file);
@@ -171,6 +172,7 @@ export function MriViewer() {
       <div className="relative w-full max-w-[512px] aspect-square overflow-hidden rounded-md border border-border bg-black flex items-center justify-center">
         {renderContent()}
       </div>
+       <ViewerToolbar />
     </div>
   );
 }

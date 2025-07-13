@@ -80,32 +80,27 @@ export function MriUploader() {
           <label
             htmlFor="file-upload"
             className={cn(
-              'relative flex flex-col items-center justify-center w-full max-w-lg h-80 rounded-lg border border-border bg-card/50 cursor-pointer transition-all duration-300 group',
-              'hover:border-primary hover:bg-accent',
-              isDragging && 'border-primary bg-accent scale-105 shadow-2xl shadow-primary/20'
+              'relative flex flex-col items-center justify-center w-full max-w-lg h-80 rounded-lg border-2 border-dashed border-border bg-card/50 cursor-pointer transition-colors duration-300 group',
+              'hover:border-primary/80 hover:bg-accent',
+              isDragging && 'border-primary bg-accent'
             )}
-            style={{
-                backgroundImage: 'radial-gradient(circle, hsl(var(--accent)) 1px, transparent 1px)',
-                backgroundSize: '1rem 1rem'
-            }}
           >
-            <div className="absolute inset-0 rounded-lg bg-background/80 transition-opacity duration-300 group-hover:bg-background/70" />
             <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
-              <div className={cn(
-                  'flex items-center justify-center w-20 h-20 rounded-lg bg-background mb-4 border border-border transition-all duration-300',
+               <div className={cn(
+                  'flex items-center justify-center w-16 h-16 rounded-full bg-background mb-4 border border-border transition-colors duration-300',
                    isDragging ? 'bg-primary/10 border-primary' : 'group-hover:bg-accent group-hover:border-primary/50'
               )}>
                 <UploadCloud
                   className={cn(
-                    'h-10 w-10 text-muted-foreground transition-all duration-300',
+                    'h-8 w-8 text-muted-foreground transition-colors duration-300',
                     isDragging ? 'text-primary' : 'group-hover:text-primary'
                   )}
                 />
               </div>
-              <p className="text-lg font-semibold">
+              <p className="text-lg font-semibold text-foreground">
                 {isDragging ? 'Drop your file here!' : 'Upload MRI Scan'}
               </p>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-sm mt-1">
                 Drag & drop or click to select a file
               </p>
               <p className="text-xs text-muted-foreground mt-4">.nii or .nii.gz files only</p>

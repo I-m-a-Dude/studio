@@ -1,6 +1,6 @@
 'use client';
 
-import { useViewStore, type ViewAxis } from '@/stores/view-store';
+import { useViewStore } from '@/stores/view-store';
 import { useAnalysisStore } from '@/stores/analysis-store';
 import {
   Accordion,
@@ -14,13 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   BrainCircuit,
-  RotateCcw,
-  ZoomIn,
-  ZoomOut,
-  Move,
   Layers,
   Box,
   AreaChart,
@@ -29,17 +24,7 @@ import {
 import { useMriStore } from '@/stores/mri-store';
 
 export function SegmentationControls() {
-  const {
-    slice,
-    maxSlices,
-    axis,
-    zoom,
-    setSlice,
-    setAxis,
-    zoomIn,
-    zoomOut,
-    resetView,
-  } = useViewStore();
+  const { axis } = useViewStore();
 
   const {
     multiPlanarView,
@@ -63,54 +48,12 @@ export function SegmentationControls() {
           Analysis
         </CardTitle>
         <CardDescription>
-          Interact with the MRI scan and adjust view properties.
+          Adjust image properties and run advanced analysis.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Accordion type="multiple" defaultValue={['item-1', 'item-2', 'item-3']} className="w-full">
+        <Accordion type="multiple" defaultValue={['item-1', 'item-2']} className="w-full">
           <AccordionItem value="item-1">
-            <AccordionTrigger disabled={isDisabled}>View Controls</AccordionTrigger>
-            <AccordionContent className="space-y-6">
-              <div className="space-y-3">
-                <Label>Slice Navigation</Label>
-                 <Slider
-                    value={[slice]}
-                    onValueChange={(value) => setSlice(value[0])}
-                    max={maxSlices[axis] > 0 ? maxSlices[axis] - 1 : 0}
-                    step={1}
-                    disabled={isDisabled}
-                  />
-                <Tabs value={axis} onValueChange={(value) => setAxis(value as ViewAxis)}>
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="axial" disabled={isDisabled}>Axial</TabsTrigger>
-                    <TabsTrigger value="sagittal" disabled={isDisabled}>Sagittal</TabsTrigger>
-                    <TabsTrigger value="coronal" disabled={isDisabled}>Coronal</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </div>
-              <div className="space-y-3">
-                <Label>Zoom & Pan</Label>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="icon" className="flex-1" onClick={zoomIn} disabled={isDisabled}>
-                    <ZoomIn />
-                  </Button>
-                  <Button variant="outline" size="icon" className="flex-1" onClick={zoomOut} disabled={isDisabled}>
-                    <ZoomOut />
-                  </Button>
-                  <Button variant="outline" size="icon" className="flex-1" disabled={isDisabled}>
-                    <Move />
-                  </Button>
-                </div>
-              </div>
-               <div className="space-y-3">
-                <Label>Orientation</Label>
-                 <Button variant="outline" className="w-full" onClick={resetView} disabled={isDisabled}>
-                   <RotateCcw className="mr-2 h-4 w-4" /> Reset View
-                 </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-2">
             <AccordionTrigger disabled={isDisabled}>Image Adjustments</AccordionTrigger>
             <AccordionContent className="space-y-6 pt-4">
                 <div className="space-y-4">
@@ -141,7 +84,7 @@ export function SegmentationControls() {
                 </div>
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-3">
+          <AccordionItem value="item-2">
             <AccordionTrigger disabled={isDisabled}>Advanced Analysis</AccordionTrigger>
             <AccordionContent className="space-y-4 pt-4">
                 <div className="flex items-center justify-between">
