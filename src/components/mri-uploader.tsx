@@ -75,17 +75,40 @@ export function MriUploader() {
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          className={cn(
-            'relative w-full border border-dashed rounded-lg p-12 text-center transition-colors duration-300',
-            isDragging ? 'border-primary bg-accent' : 'border-border hover:border-primary'
-          )}
+          className="w-full flex justify-center"
         >
-          <label htmlFor="file-upload" className="cursor-pointer">
-            <div className="flex flex-col items-center justify-center">
-              <UploadCloud className="h-16 w-16 text-muted-foreground mb-4" />
-              <p className="text-lg font-semibold">Drag & drop your file here</p>
-              <p className="text-muted-foreground">or click to browse</p>
-              <p className="text-xs text-muted-foreground mt-2">.nii or .nii.gz files only</p>
+          <label
+            htmlFor="file-upload"
+            className={cn(
+              'relative flex flex-col items-center justify-center w-80 h-80 rounded-full border border-border bg-card/50 cursor-pointer transition-all duration-300 group',
+              'hover:border-primary hover:bg-accent',
+              isDragging && 'border-primary bg-accent scale-105 shadow-2xl shadow-primary/20'
+            )}
+            style={{
+                backgroundImage: 'radial-gradient(circle, hsl(var(--accent)) 1px, transparent 1px)',
+                backgroundSize: '1rem 1rem'
+            }}
+          >
+            <div className="absolute inset-0 rounded-full bg-background/80 transition-opacity duration-300 group-hover:bg-background/70" />
+            <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
+              <div className={cn(
+                  'flex items-center justify-center w-24 h-24 rounded-full bg-background mb-4 border border-border transition-all duration-300',
+                   isDragging ? 'bg-primary/10 border-primary' : 'group-hover:bg-accent group-hover:border-primary/50'
+              )}>
+                <UploadCloud
+                  className={cn(
+                    'h-12 w-12 text-muted-foreground transition-all duration-300',
+                    isDragging ? 'text-primary' : 'group-hover:text-primary'
+                  )}
+                />
+              </div>
+              <p className="text-lg font-semibold">
+                {isDragging ? 'Drop your file!' : 'Upload File'}
+              </p>
+              <p className="text-muted-foreground text-sm">
+                Drag & drop or click
+              </p>
+              <p className="text-xs text-muted-foreground mt-4">.nii or .nii.gz files only</p>
             </div>
             <input
               id="file-upload"
