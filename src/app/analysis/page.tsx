@@ -16,7 +16,7 @@ export default function AnalysisPage() {
     <div className="flex flex-col h-screen bg-background text-foreground">
       <header className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
         <Logo />
-        <Button variant="outline" asChild>
+        <Button variant="outline" asChild className="rounded-full">
             <Link href="/">
               Back to Upload
             </Link>
