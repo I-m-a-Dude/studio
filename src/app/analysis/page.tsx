@@ -1,3 +1,5 @@
+'use client';
+
 import { MriViewer } from '@/components/mri-viewer';
 import { SegmentationControls } from '@/components/segmentation-controls';
 import { Logo } from '@/components/logo';

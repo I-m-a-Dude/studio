@@ -7,7 +7,7 @@ interface ViewState {
   maxSlices: Record<ViewAxis, number>;
   axis: ViewAxis;
   zoom: number;
-  setSlice: (slice: number) => void;
+  setSlice: (slice: number | ((prevSlice: number) => number)) => void;
   setAxis: (axis: ViewAxis) => void;
   setMaxSlices: (maxSlices: Record<ViewAxis, number>) => void;
   zoomIn: () => void;
@@ -20,7 +20,13 @@ export const useViewStore = create<ViewState>((set, get) => ({
   maxSlices: { axial: 0, sagittal: 0, coronal: 0 },
   axis: 'axial',
   zoom: 1,
-  setSlice: (slice) => set({ slice }),
+  setSlice: (slice) => {
+    if (typeof slice === 'function') {
+      set((state) => ({ slice: slice(state.slice) }));
+    } else {
+      set({ slice });
+    }
+  },
   setAxis: (axis) => {
     const { maxSlices } = get();
     // Reset slice to the middle when changing axis
