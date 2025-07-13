@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { SegmentationFAB } from '@/components/segmentation-fab';
 import { useCineMode } from '@/hooks/use-cine-mode';
+import { MetadataViewerDialog } from '@/components/metadata-viewer-dialog';
 
 export default function AnalysisPage() {
   useCineMode();
@@ -36,6 +37,7 @@ export default function AnalysisPage() {
         </div>
         <SegmentationFAB />
       </main>
+      <MetadataViewerDialog />
     </div>
   );
 }

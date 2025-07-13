@@ -13,7 +13,7 @@ import { ViewerToolbar } from './viewer-toolbar';
 export function MriViewer() {
   const file = useMriStore((state) => state.file);
   const { slice, zoom, axis, setMaxSlices } = useViewStore();
-  const { setHistogramData, setProfileCurveData } = useAnalysisStore();
+  const { setHistogramData, setProfileCurveData, setMetadata } = useAnalysisStore();
 
   const [niftiHeader, setNiftiHeader] = useState<nifti.NIFTI1 | nifti.NIFTI2 | null>(null);
   const [niftiImage, setNiftiImage] = useState<ArrayBuffer | null>(null);
@@ -90,6 +90,29 @@ export function MriViewer() {
           });
           
           calculateAndSetChartData(header, image);
+          setMetadata({
+            'Description': header.description,
+            'Dimensions': header.dims,
+            'Voxel Size': header.pixDims,
+            'Data Type': nifti.getNIFTIDataType(header.datatype),
+            'Endianness': header.little_endian ? 'Little' : 'Big',
+            'Calibration Max': header.cal_max,
+            'Calibration Min': header.cal_min,
+            'Slice Duration': header.slice_duration,
+            'Time Offset': header.toffset,
+            'Q-form Code': header.qform_code,
+            'S-form Code': header.sform_code,
+            'Quaternion B': header.quatern_b,
+            'Quaternion C': header.quatern_c,
+            'Quaternion D': header.quatern_d,
+            'Q-offset X': header.qoffset_x,
+            'Q-offset Y': header.qoffset_y,
+            'Q-offset Z': header.qoffset_z,
+            'S-Row X': header.srow_x,
+            'S-Row Y': header.srow_y,
+            'S-Row Z': header.srow_z,
+            'Intent Name': header.intent_name,
+          });
 
         } else {
           setError('The provided file is not a valid NIfTI file.');
@@ -103,7 +126,7 @@ export function MriViewer() {
     };
 
     loadNiftiFile();
-  }, [file, setMaxSlices, setHistogramData, setProfileCurveData]);
+  }, [file, setMaxSlices, setHistogramData, setProfileCurveData, setMetadata]);
   
   const drawSlice = (currentSlice: number, currentAxis: ViewAxis) => {
     if (!niftiHeader || !niftiImage || !canvasRef.current) return;

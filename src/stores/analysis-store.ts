@@ -20,6 +20,8 @@ interface AnalysisState {
   contrast: number;
   histogramData: HistogramData[];
   profileCurveData: ProfileCurveData[];
+  showMetadataViewer: boolean;
+  metadata: Record<string, any> | null;
   setMultiPlanarView: (value: boolean) => void;
   setThreeDReconstruction: (value: boolean) => void;
   setShowHistogram: (value: boolean) => void;
@@ -29,6 +31,8 @@ interface AnalysisState {
   setContrast: (value: number) => void;
   setHistogramData: (data: HistogramData[]) => void;
   setProfileCurveData: (data: ProfileCurveData[]) => void;
+  setShowMetadataViewer: (value: boolean) => void;
+  setMetadata: (data: Record<string, any> | null) => void;
 }
 
 export const useAnalysisStore = create<AnalysisState>((set) => ({
@@ -41,6 +45,8 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   contrast: 50,
   histogramData: [],
   profileCurveData: [],
+  showMetadataViewer: false,
+  metadata: null,
   setMultiPlanarView: (value) => set({ multiPlanarView: value }),
   setThreeDReconstruction: (value) => set({ threeDReconstruction: value }),
   setShowHistogram: (value) => set({ showHistogram: value }),
@@ -50,4 +56,6 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   setContrast: (value) => set({ contrast: value }),
   setHistogramData: (data) => set({ histogramData: data }),
   setProfileCurveData: (data) => set({ profileCurveData: data }),
+  setShowMetadataViewer: (value) => set({ showMetadataViewer: value }),
+  setMetadata: (data) => set({ metadata: data }),
 }));

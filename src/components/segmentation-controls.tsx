@@ -22,7 +22,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
 import { useMriStore } from '@/stores/mri-store';
 import { Separator } from './ui/separator';
 import {
@@ -36,18 +35,15 @@ import { ProfileCurveChart } from './profile-curve-chart';
 
 export function SegmentationControls() {
   const {
-    multiPlanarView,
-    threeDReconstruction,
     showHistogram,
     showProfileCurves,
     brightness,
     contrast,
-    setMultiPlanarView,
-    setThreeDReconstruction,
     setShowHistogram,
     setShowProfileCurves,
     setBrightness,
     setContrast,
+    setShowMetadataViewer
   } = useAnalysisStore();
 
   const file = useMriStore((state) => state.file);
@@ -161,27 +157,15 @@ export function SegmentationControls() {
         <div className="space-y-4">
           <h3 className="font-semibold">Advanced Analysis</h3>
           <div className="space-y-4 pt-4">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="mpr-switch" className="flex items-center gap-2">
-                <Layers className="h-4 w-4" /> Multi-planar View
-              </Label>
-              <Switch
-                id="mpr-switch"
-                checked={multiPlanarView}
-                onCheckedChange={setMultiPlanarView}
-                disabled={isDisabled}
-              />
-            </div>
-            <div className="flex items-center justify-between">
+             <div className="flex items-center justify-between">
               <Label htmlFor="3d-switch" className="flex items-center gap-2">
                 <Box className="h-4 w-4" /> 3D Reconstruction
               </Label>
-              <Switch
-                id="3d-switch"
-                checked={threeDReconstruction}
-                onCheckedChange={setThreeDReconstruction}
-                disabled={isDisabled}
-              />
+            </div>
+             <div className="flex items-center justify-between">
+              <Label htmlFor="mpr-switch" className="flex items-center gap-2">
+                <Layers className="h-4 w-4" /> Multi-planar View
+              </Label>
             </div>
             <div className="space-y-2">
                 <Button
@@ -234,7 +218,7 @@ export function SegmentationControls() {
                 <DropdownMenuItem>DICOM</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="outline" className="w-full justify-start gap-2" disabled={isDisabled}>
+            <Button variant="outline" className="w-full justify-start gap-2" onClick={() => setShowMetadataViewer(true)} disabled={isDisabled}>
                 <FileText className="h-4 w-4" /> Metadata Viewer
             </Button>
           </div>
