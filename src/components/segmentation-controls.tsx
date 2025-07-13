@@ -8,7 +8,6 @@ import {
   AreaChart,
   LineChart,
   GitCompareArrows,
-  Film,
   Download,
   FileText,
 } from 'lucide-react';
@@ -43,14 +42,12 @@ export function SegmentationControls() {
     showProfileCurves,
     brightness,
     contrast,
-    isCineMode,
     setMultiPlanarView,
     setThreeDReconstruction,
     setShowHistogram,
     setShowProfileCurves,
     setBrightness,
     setContrast,
-    setIsCineMode,
   } = useAnalysisStore();
 
   const file = useMriStore((state) => state.file);
@@ -225,17 +222,6 @@ export function SegmentationControls() {
             <Button variant="outline" className="w-full justify-start gap-2" disabled={isDisabled}>
                 <GitCompareArrows className="h-4 w-4" /> Study Comparison
             </Button>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="cine-switch" className="flex items-center gap-2">
-                <Film className="h-4 w-4" /> Cine Mode
-              </Label>
-              <Switch
-                id="cine-switch"
-                checked={isCineMode}
-                onCheckedChange={setIsCineMode}
-                disabled={isDisabled}
-              />
-            </div>
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="w-full justify-start gap-2" disabled={isDisabled}>
