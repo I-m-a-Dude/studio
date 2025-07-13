@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/accordion';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -112,16 +113,31 @@ export function SegmentationControls() {
           <AccordionItem value="item-2">
             <AccordionTrigger disabled={isDisabled}>Image Adjustments</AccordionTrigger>
             <AccordionContent className="space-y-6 pt-4">
-                <div className="space-y-3">
-                    <Label>Windowing (Contrast/Brightness)</Label>
-                    <div className="space-y-2">
-                        <Slider defaultValue={[50]} max={100} step={1} disabled={isDisabled} />
-                        <Slider defaultValue={[50]} max={100} step={1} disabled={isDisabled}/>
+                <div className="space-y-4">
+                    <Label>Windowing</Label>
+                    <div className="space-y-4">
+                        <div>
+                            <Label className="text-xs text-muted-foreground">Contrast</Label>
+                            <div className="flex items-center gap-2">
+                                <Slider defaultValue={[50]} max={100} step={1} disabled={isDisabled} />
+                                <Input type="number" defaultValue={50} className="w-20 h-8" disabled={isDisabled}/>
+                            </div>
+                        </div>
+                        <div>
+                            <Label className="text-xs text-muted-foreground">Brightness</Label>
+                            <div className="flex items-center gap-2">
+                                <Slider defaultValue={[50]} max={100} step={1} disabled={isDisabled}/>
+                                <Input type="number" defaultValue={50} className="w-20 h-8" disabled={isDisabled}/>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="space-y-3">
                     <Label>Slice Thickness</Label>
-                    <Slider defaultValue={[1]} min={1} max={10} step={0.5} disabled={isDisabled} />
+                     <div className="flex items-center gap-2">
+                        <Slider defaultValue={[1]} min={1} max={10} step={0.5} disabled={isDisabled} />
+                        <Input type="number" defaultValue={1} min={1} max={10} step={0.5} className="w-20 h-8" disabled={isDisabled}/>
+                    </div>
                 </div>
             </AccordionContent>
           </AccordionItem>
