@@ -23,8 +23,8 @@ export default function AnalysisPage() {
           </div>
         </div>
       </header>
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 p-4 overflow-hidden relative">
-        <div className="lg:col-span-2 bg-black rounded-lg flex flex-col items-center justify-center overflow-hidden gap-2">
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4 overflow-hidden relative">
+        <div className="lg:col-span-3 bg-black rounded-lg flex flex-col items-center justify-center overflow-hidden gap-2">
           <MriViewer />
           <ViewerToolbar />
         </div>
