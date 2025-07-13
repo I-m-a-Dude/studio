@@ -60,11 +60,39 @@ export function MriUploader() {
   const handleNavigateToAnalysis = () => {
     if (file) {
       setIsUploading(true);
-      // Simulate upload/processing time
-      setTimeout(() => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          // Store file info and data URL in session storage
+          const fileInfo = {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            dataUrl: reader.result as string,
+          };
+          sessionStorage.setItem('mriFile', JSON.stringify(fileInfo));
+          setIsUploading(false);
+          router.push('/analysis');
+        } catch (error) {
+           console.error("Error storing file in session storage:", error);
+           toast({
+              title: "Error",
+              description: "Could not store the file. It might be too large.",
+              variant: "destructive",
+           });
+           setIsUploading(false);
+        }
+      };
+      reader.onerror = () => {
+        console.error("Error reading file");
+        toast({
+          title: "Error Reading File",
+          description: "There was a problem reading your file.",
+          variant: "destructive",
+        });
         setIsUploading(false);
-        router.push('/analysis');
-      }, 1500);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
