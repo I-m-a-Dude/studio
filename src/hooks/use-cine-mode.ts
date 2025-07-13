@@ -7,14 +7,15 @@ import { useViewStore } from '@/stores/view-store';
 const CINE_MODE_INTERVAL = 100; // ms
 
 export function useCineMode() {
-  const { isCineMode } = useAnalysisStore();
+  const { isCineMode, setIsCineMode } = useAnalysisStore();
   const { slice, maxSlices, axis, setSlice } = useViewStore();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // This effect starts/stops the animation.
     if (isCineMode && maxSlices[axis] > 0) {
       intervalRef.current = setInterval(() => {
-        setSlice((slice + 1) % maxSlices[axis]);
+        setSlice((currentSlice) => (currentSlice + 1) % maxSlices[axis]);
       }, CINE_MODE_INTERVAL);
     } else {
       if (intervalRef.current) {
@@ -27,16 +28,18 @@ export function useCineMode() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isCineMode, slice, maxSlices, axis, setSlice]);
+  }, [isCineMode, maxSlices, axis, setSlice]);
 
-  // Effect to update slice based on store changes
+
   useEffect(() => {
-      const unsub = useViewStore.subscribe((state, prevState) => {
-          if (isCineMode && state.slice !== prevState.slice) {
-              // The slice is already updated by the interval, so we don't need to do anything here.
-              // This is mainly to ensure the component re-renders if slice is changed from elsewhere.
-          }
-      });
-      return unsub;
-  }, [isCineMode]);
+    // This effect resets the slice to 0 when CineMode is turned on.
+    const unsub = useAnalysisStore.subscribe((state, prevState) => {
+      // When isCineMode changes from false to true
+      if (state.isCineMode && !prevState.isCineMode) {
+        setSlice(0);
+      }
+    });
+
+    return unsub;
+  }, [setSlice]);
 }
