@@ -9,7 +9,6 @@ import {
   LineChart,
   GitCompareArrows,
   Film,
-  Settings2,
   Download,
   FileText,
 } from 'lucide-react';
@@ -27,13 +26,6 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useMriStore } from '@/stores/mri-store';
 import { Separator } from './ui/separator';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -193,19 +185,6 @@ export function SegmentationControls() {
                 disabled={isDisabled}
               />
             </div>
-             <Select disabled={isDisabled}>
-                <SelectTrigger className="w-full">
-                    <div className="flex items-center gap-2">
-                        <Settings2 className="h-4 w-4" />
-                        <SelectValue placeholder="Presets" />
-                    </div>
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="bone">Bone</SelectItem>
-                    <SelectItem value="soft-tissue">Soft Tissue</SelectItem>
-                    <SelectItem value="lung">Lung</SelectItem>
-                </SelectContent>
-            </Select>
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="w-full justify-start gap-2" disabled={isDisabled}>
