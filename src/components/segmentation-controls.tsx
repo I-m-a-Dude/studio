@@ -39,14 +39,41 @@ export function SegmentationControls() {
     threeDReconstruction,
     showHistogram,
     showProfileCurves,
+    brightness,
+    contrast,
     setMultiPlanarView,
     setThreeDReconstruction,
     setShowHistogram,
     setShowProfileCurves,
+    setBrightness,
+    setContrast,
   } = useAnalysisStore();
 
   const file = useMriStore((state) => state.file);
   const isDisabled = !file;
+  
+  const handleContrastSliderChange = (value: number[]) => {
+    setContrast(value[0]);
+  };
+  
+  const handleContrastInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10);
+    if (!isNaN(value)) {
+      setContrast(Math.max(0, Math.min(100, value)));
+    }
+  };
+
+  const handleBrightnessSliderChange = (value: number[]) => {
+    setBrightness(value[0]);
+  };
+
+  const handleBrightnessInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10);
+     if (!isNaN(value)) {
+      setBrightness(Math.max(0, Math.min(100, value)));
+    }
+  };
+
 
   return (
     <Card className="w-full h-full overflow-y-auto">
@@ -66,35 +93,39 @@ export function SegmentationControls() {
             <div className="space-y-4">
               <Label>Windowing</Label>
               <div className="space-y-4">
-                <div>
+                <div className="space-y-2">
                   <Label className="text-xs text-muted-foreground">Contrast</Label>
                   <div className="flex items-center gap-2">
                     <Slider
-                      defaultValue={[50]}
+                      value={[contrast]}
+                      onValueChange={handleContrastSliderChange}
                       max={100}
                       step={1}
                       disabled={isDisabled}
                     />
                     <Input
                       type="number"
-                      defaultValue={50}
+                      value={contrast}
+                      onChange={handleContrastInputChange}
                       className="w-20 h-8"
                       disabled={isDisabled}
                     />
                   </div>
                 </div>
-                <div>
+                <div className="space-y-2">
                   <Label className="text-xs text-muted-foreground">Brightness</Label>
                   <div className="flex items-center gap-2">
                     <Slider
-                      defaultValue={[50]}
+                      value={[brightness]}
+                      onValueChange={handleBrightnessSliderChange}
                       max={100}
                       step={1}
                       disabled={isDisabled}
                     />
                     <Input
                       type="number"
-                      defaultValue={50}
+                      value={brightness}
+                      onChange={handleBrightnessInputChange}
                       className="w-20 h-8"
                       disabled={isDisabled}
                     />
