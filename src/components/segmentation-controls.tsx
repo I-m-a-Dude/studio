@@ -10,6 +10,7 @@ import {
   GitCompareArrows,
   Download,
   FileText,
+  Sparkles,
 } from 'lucide-react';
 import {
   Card,
@@ -157,6 +158,10 @@ export function SegmentationControls() {
         <div className="space-y-4">
           <h3 className="font-semibold">Advanced Analysis</h3>
           <div className="space-y-4 pt-4">
+            <Button className="w-full" disabled={isDisabled}>
+              <Sparkles className="mr-2 h-4 w-4" />
+              AI Segmentation
+            </Button>
              <div className="flex items-center justify-between">
               <Label htmlFor="3d-switch" className="flex items-center gap-2">
                 <Box className="h-4 w-4" /> 3D Reconstruction
