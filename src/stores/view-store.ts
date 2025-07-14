@@ -36,8 +36,8 @@ export const useViewStore = create<ViewState>((set, get) => ({
      const { axis } = get();
      set({ maxSlices, slice: Math.floor(maxSlices[axis] / 2) });
   },
-  zoomIn: () => set((state) => ({ zoom: Math.min(state.zoom + 0.1, 3) })),
-  zoomOut: () => set((state) => ({ zoom: Math.max(state.zoom - 0.1, 0.5) })),
+  zoomIn: () => set((state) => ({ zoom: Math.min(state.zoom * 1.1, 5) })),
+  zoomOut: () => set((state) => ({ zoom: Math.max(state.zoom / 1.1, 0.2) })),
   resetView: () => {
     const { maxSlices, axis } = get();
     set({ zoom: 1, slice: Math.floor(maxSlices[axis] / 2) });

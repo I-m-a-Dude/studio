@@ -38,7 +38,7 @@ function getDataType(code: number): string {
 
 export function MriViewer() {
   const file = useMriStore((state) => state.file);
-  const { slice, zoom, axis, setMaxSlices } = useViewStore();
+  const { slice, zoom, axis, setMaxSlices, zoomIn, zoomOut } = useViewStore();
   const { setHistogramData, setProfileCurveData, setMetadata } = useAnalysisStore();
 
   const [niftiHeader, setNiftiHeader] = useState<nifti.NIFTI1 | nifti.NIFTI2 | null>(null);
@@ -222,6 +222,15 @@ export function MriViewer() {
     }
   }, [slice, axis, loading, error, niftiHeader, niftiImage, zoom]);
 
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      zoomIn();
+    } else {
+      zoomOut();
+    }
+  };
+
   const renderContent = () => {
     if (loading) {
       return <Skeleton className="w-full h-full" />;
@@ -260,7 +269,10 @@ export function MriViewer() {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-4 gap-4 bg-black rounded-lg">
-      <div className="relative w-full max-w-[512px] aspect-square overflow-hidden rounded-md border border-border bg-black flex items-center justify-center">
+      <div
+        className="relative w-full max-w-[512px] aspect-square overflow-hidden rounded-md border border-border bg-black flex items-center justify-center"
+        onWheel={handleWheel}
+      >
         {renderContent()}
       </div>
        <ViewerToolbar />
