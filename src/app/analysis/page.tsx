@@ -28,7 +28,7 @@ export default function AnalysisPage() {
       <main className="flex-1 grid lg:grid-cols-4 gap-4 p-4 overflow-hidden relative">
         <div 
           className={cn(
-            "transition-all duration-300 ease-in-out bg-black/20 rounded-lg flex items-center justify-center overflow-hidden",
+            "transition-all duration-500 ease-in-out bg-black/20 rounded-lg flex items-center justify-center overflow-hidden",
             showAnalysisPanel ? "lg:col-span-3" : "lg:col-span-4"
           )}
         >
@@ -36,10 +36,10 @@ export default function AnalysisPage() {
         </div>
         <div 
           className={cn(
-            "transition-all duration-300 ease-in-out transform",
-             showAnalysisPanel
-              ? "lg:col-span-1 overflow-y-auto lg:translate-x-0"
-              : "hidden lg:block lg:col-span-1 overflow-y-auto lg:translate-x-full"
+            "lg:block transition-all duration-500 ease-in-out transform absolute lg:relative top-0 right-0 h-full lg:h-auto w-full max-w-sm lg:max-w-none lg:w-auto lg:col-span-1 overflow-y-auto",
+            showAnalysisPanel
+              ? "translate-x-0"
+              : "translate-x-full lg:translate-x-0"
           )}
         >
           <SegmentationControls />
