@@ -11,6 +11,7 @@ export interface ProfileCurveData {
 }
 
 interface AnalysisState {
+  showAnalysisPanel: boolean;
   multiPlanarView: boolean;
   threeDReconstruction: boolean;
   showHistogram: boolean;
@@ -22,6 +23,7 @@ interface AnalysisState {
   profileCurveData: ProfileCurveData[];
   showMetadataViewer: boolean;
   metadata: Record<string, any> | null;
+  setShowAnalysisPanel: (value: boolean) => void;
   setMultiPlanarView: (value: boolean) => void;
   setThreeDReconstruction: (value: boolean) => void;
   setShowHistogram: (value: boolean) => void;
@@ -36,6 +38,7 @@ interface AnalysisState {
 }
 
 export const useAnalysisStore = create<AnalysisState>((set) => ({
+  showAnalysisPanel: true,
   multiPlanarView: false,
   threeDReconstruction: false,
   showHistogram: false,
@@ -47,6 +50,7 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   profileCurveData: [],
   showMetadataViewer: false,
   metadata: null,
+  setShowAnalysisPanel: (value) => set({ showAnalysisPanel: value }),
   setMultiPlanarView: (value) => set({ multiPlanarView: value }),
   setThreeDReconstruction: (value) => set({ threeDReconstruction: value }),
   setShowHistogram: (value) => set({ showHistogram: value }),

@@ -8,9 +8,12 @@ import Link from 'next/link';
 import { SegmentationFAB } from '@/components/segmentation-fab';
 import { useCineMode } from '@/hooks/use-cine-mode';
 import { MetadataViewerDialog } from '@/components/metadata-viewer-dialog';
+import { cn } from '@/lib/utils';
+import { useAnalysisStore } from '@/stores/analysis-store';
 
 export default function AnalysisPage() {
   useCineMode();
+  const showAnalysisPanel = useAnalysisStore((state) => state.showAnalysisPanel);
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
@@ -22,11 +25,21 @@ export default function AnalysisPage() {
             </Link>
         </Button>
       </header>
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4 overflow-hidden relative">
-        <div className="lg:col-span-3 bg-black/20 rounded-lg flex items-center justify-center overflow-hidden">
+      <main className="flex-1 grid grid-cols-4 gap-4 p-4 overflow-hidden relative">
+        <div 
+          className={cn(
+            "transition-all duration-300 ease-in-out bg-black/20 rounded-lg flex items-center justify-center overflow-hidden",
+            showAnalysisPanel ? "col-span-4 lg:col-span-3" : "col-span-4"
+          )}
+        >
           <MriViewer />
         </div>
-        <div className="lg:col-span-1 overflow-y-auto">
+        <div 
+          className={cn(
+            "transition-all duration-300 ease-in-out",
+             showAnalysisPanel ? "col-span-4 lg:col-span-1 overflow-y-auto" : "hidden"
+          )}
+        >
           <SegmentationControls />
         </div>
         <SegmentationFAB />
