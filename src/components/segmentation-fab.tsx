@@ -20,7 +20,7 @@ export function SegmentationFAB() {
 
     return (
         <TooltipProvider>
-            <div className="absolute bottom-8 right-8 flex flex-col items-center gap-2">
+            <div className="p-8 flex flex-col items-center gap-2">
                  <Tooltip>
                     <TooltipTrigger asChild>
                         <Button

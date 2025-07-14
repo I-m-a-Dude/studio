@@ -25,22 +25,23 @@ export default function AnalysisPage() {
             </Link>
         </Button>
       </header>
-      <main className="flex-1 flex overflow-hidden relative">
-        <div className="flex-1 flex flex-col p-4 overflow-hidden">
-            <div className="w-full h-full bg-black/20 rounded-lg flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out">
+      <main className="flex flex-1 overflow-hidden">
+        <div className="flex-1 flex flex-col p-4 overflow-hidden transition-all duration-300 ease-in-out">
+            <div className="w-full h-full bg-black/20 rounded-lg flex items-center justify-center overflow-hidden">
                 <MriViewer />
             </div>
         </div>
         <div 
           className={cn(
-            "transition-transform duration-300 ease-in-out transform w-full max-w-sm border-l border-border bg-card lg:w-96",
-            "absolute lg:relative h-full top-0 right-0",
+            "transition-transform duration-300 ease-in-out transform w-full max-w-sm border-l border-border bg-card lg:w-96 flex-shrink-0",
             showAnalysisPanel ? 'translate-x-0' : 'translate-x-full'
           )}
         >
           <SegmentationControls />
         </div>
-        <SegmentationFAB />
+        <div className="absolute bottom-0 right-0">
+          <SegmentationFAB />
+        </div>
       </main>
       <MetadataViewerDialog />
     </div>
