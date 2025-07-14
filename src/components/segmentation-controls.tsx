@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { HistogramChart } from './histogram-chart';
 import { ProfileCurveChart } from './profile-curve-chart';
+import { useState } from 'react';
 
 export function SegmentationControls() {
   const {
@@ -48,40 +49,50 @@ export function SegmentationControls() {
     setSliceThickness,
     setShowMetadataViewer
   } = useAnalysisStore();
+  
+  const [localContrast, setLocalContrast] = useState(contrast);
+  const [localBrightness, setLocalBrightness] = useState(brightness);
+  const [localSliceThickness, setLocalSliceThickness] = useState(sliceThickness);
 
   const file = useMriStore((state) => state.file);
   const isDisabled = !file;
   
   const handleContrastSliderChange = (value: number[]) => {
-    setContrast(value[0]);
+    setLocalContrast(value[0]);
   };
   
   const handleContrastInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10);
     if (!isNaN(value)) {
-      setContrast(Math.max(0, Math.min(100, value)));
+      const clampedValue = Math.max(0, Math.min(100, value));
+      setLocalContrast(clampedValue);
+      setContrast(clampedValue);
     }
   };
 
   const handleBrightnessSliderChange = (value: number[]) => {
-    setBrightness(value[0]);
+    setLocalBrightness(value[0]);
   };
 
   const handleBrightnessInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10);
      if (!isNaN(value)) {
-      setBrightness(Math.max(0, Math.min(100, value)));
+      const clampedValue = Math.max(0, Math.min(100, value));
+      setLocalBrightness(clampedValue);
+      setBrightness(clampedValue);
     }
   };
 
   const handleSliceThicknessSliderChange = (value: number[]) => {
-    setSliceThickness(value[0]);
+    setLocalSliceThickness(value[0]);
   };
 
   const handleSliceThicknessInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(event.target.value);
     if (!isNaN(value)) {
-      setSliceThickness(Math.max(1, Math.min(10, value)));
+      const clampedValue = Math.max(1, Math.min(10, value));
+      setLocalSliceThickness(clampedValue);
+      setSliceThickness(clampedValue);
     }
   };
 
@@ -108,15 +119,16 @@ export function SegmentationControls() {
                   <Label className="text-xs text-muted-foreground">Contrast</Label>
                   <div className="flex items-center gap-2">
                     <Slider
-                      value={[contrast]}
+                      value={[localContrast]}
                       onValueChange={handleContrastSliderChange}
+                      onValueCommit={(value) => setContrast(value[0])}
                       max={100}
                       step={1}
                       disabled={isDisabled}
                     />
                     <Input
                       type="number"
-                      value={contrast}
+                      value={localContrast}
                       onChange={handleContrastInputChange}
                       className="w-20 h-8"
                       disabled={isDisabled}
@@ -127,15 +139,16 @@ export function SegmentationControls() {
                   <Label className="text-xs text-muted-foreground">Brightness</Label>
                   <div className="flex items-center gap-2">
                     <Slider
-                      value={[brightness]}
+                      value={[localBrightness]}
                       onValueChange={handleBrightnessSliderChange}
+                      onValueCommit={(value) => setBrightness(value[0])}
                       max={100}
                       step={1}
                       disabled={isDisabled}
                     />
                     <Input
                       type="number"
-                      value={brightness}
+                      value={localBrightness}
                       onChange={handleBrightnessInputChange}
                       className="w-20 h-8"
                       disabled={isDisabled}
@@ -148,8 +161,9 @@ export function SegmentationControls() {
               <Label>Slice Thickness</Label>
               <div className="flex items-center gap-2">
                 <Slider
-                  value={[sliceThickness]}
+                  value={[localSliceThickness]}
                   onValueChange={handleSliceThicknessSliderChange}
+                  onValueCommit={(value) => setSliceThickness(value[0])}
                   min={1}
                   max={10}
                   step={0.5}
@@ -157,7 +171,7 @@ export function SegmentationControls() {
                 />
                 <Input
                   type="number"
-                  value={sliceThickness}
+                  value={localSliceThickness}
                   onChange={handleSliceThicknessInputChange}
                   min={1}
                   max={10}
