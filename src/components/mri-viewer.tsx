@@ -40,7 +40,14 @@ function getDataType(code: number): string {
 export function MriViewer() {
   const file = useMriStore((state) => state.file);
   const { slice, zoom, axis, pan, setPan, setMaxSlices, zoomIn, zoomOut } = useViewStore();
-  const { setHistogramData, setProfileCurveData, setMetadata } = useAnalysisStore();
+  const { 
+    brightness, 
+    contrast, 
+    sliceThickness,
+    setHistogramData, 
+    setProfileCurveData, 
+    setMetadata 
+  } = useAnalysisStore();
 
   const [niftiHeader, setNiftiHeader] = useState<nifti.NIFTI1 | nifti.NIFTI2 | null>(null);
   const [niftiImage, setNiftiImage] = useState<ArrayBuffer | null>(null);
@@ -164,17 +171,20 @@ export function MriViewer() {
     if (!niftiHeader || !niftiImage || !canvasRef.current) return;
 
     const dims = niftiHeader.dims;
-    let cols, rows;
+    let cols, rows, maxSliceForAxis;
     
     if (currentAxis === 'axial') { // Z
         cols = dims[1];
         rows = dims[2];
+        maxSliceForAxis = dims[3];
     } else if (currentAxis === 'coronal') { // Y
         cols = dims[1];
         rows = dims[3];
+        maxSliceForAxis = dims[2];
     } else { // Sagittal / X
         cols = dims[2];
         rows = dims[3];
+        maxSliceForAxis = dims[1];
     }
 
     const canvas = canvasRef.current;
@@ -183,6 +193,10 @@ export function MriViewer() {
     const ctx = canvas.getContext('2d');
 
     if (!ctx) return;
+
+    // Apply brightness and contrast
+    // 50 is default (100%), 0 is 0%, 100 is 200%
+    ctx.filter = `brightness(${brightness / 50}) contrast(${contrast / 50})`;
     
     const imageData = ctx.createImageData(cols, rows);
 
@@ -195,21 +209,35 @@ export function MriViewer() {
     if (maxVal === 0) maxVal = 1; // Avoid division by zero
 
     const sliceSize = dims[1] * dims[2];
+    const thickness = Math.floor(sliceThickness);
+    const halfThickness = Math.floor(thickness / 2);
     
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
-            let voxelIndex;
-            if (currentAxis === 'axial') {
-                voxelIndex = j + (i * dims[1]) + (currentSlice * sliceSize);
-            } else if (currentAxis === 'coronal') {
-                voxelIndex = j + (currentSlice * dims[1]) + (i * sliceSize);
-            } else { // sagittal
-                voxelIndex = currentSlice + (j * dims[1]) + (i * sliceSize);
+            let totalValue = 0;
+            let count = 0;
+
+            for(let t = -halfThickness; t <= halfThickness; t++) {
+                const sliceToSample = Math.round(currentSlice) + t;
+                if (sliceToSample < 0 || sliceToSample >= maxSliceForAxis) continue;
+
+                let voxelIndex;
+                if (currentAxis === 'axial') {
+                    voxelIndex = j + (i * dims[1]) + (sliceToSample * sliceSize);
+                } else if (currentAxis === 'coronal') {
+                    voxelIndex = j + (sliceToSample * dims[1]) + (i * sliceSize);
+                } else { // sagittal
+                    voxelIndex = sliceToSample + (j * dims[1]) + (i * sliceSize);
+                }
+                
+                // This assumes Float32 data type for simplicity
+                const pixelData = new Float32Array(niftiImage, voxelIndex * 4, 1);
+                totalValue += pixelData[0];
+                count++;
             }
             
-            // This assumes Float32 data type for simplicity
-            const pixelData = new Float32Array(niftiImage, voxelIndex * 4, 1);
-            const value = Math.round(Math.abs(pixelData[0] / maxVal) * 255);
+            const avgValue = count > 0 ? totalValue / count : 0;
+            const value = Math.round(Math.abs(avgValue / maxVal) * 255);
             const pixelOffset = (i * cols + j) * 4;
 
             imageData.data[pixelOffset] = value;
@@ -226,7 +254,7 @@ export function MriViewer() {
     if (!loading && !error && niftiHeader) {
       drawSlice(slice, axis);
     }
-  }, [slice, axis, loading, error, niftiHeader, niftiImage]);
+  }, [slice, axis, loading, error, niftiHeader, niftiImage, brightness, contrast, sliceThickness]);
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -301,7 +329,7 @@ export function MriViewer() {
                 }}
             />
             <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                Slice: {slice + 1} / {useViewStore.getState().maxSlices[axis]}
+                Slice: {Math.round(slice) + 1} / {useViewStore.getState().maxSlices[axis]}
             </div>
              <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded capitalize">
                 {axis} View
