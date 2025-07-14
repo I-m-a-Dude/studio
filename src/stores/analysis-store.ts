@@ -38,7 +38,7 @@ interface AnalysisState {
 }
 
 export const useAnalysisStore = create<AnalysisState>((set) => ({
-  showAnalysisPanel: true,
+  showAnalysisPanel: false,
   multiPlanarView: false,
   threeDReconstruction: false,
   showHistogram: false,
