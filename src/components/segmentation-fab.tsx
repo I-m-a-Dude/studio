@@ -20,7 +20,7 @@ export function SegmentationFAB() {
 
     return (
         <TooltipProvider>
-            <div className="p-8 flex flex-col items-center gap-2">
+            <div className="p-4 flex flex-col items-center gap-2">
                  <Tooltip>
                     <TooltipTrigger asChild>
                         <Button
@@ -37,7 +37,7 @@ export function SegmentationFAB() {
                             )}
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent side="left">
                         <p>{showAnalysisPanel ? 'Close' : 'Open'} Analysis Panel</p>
                     </TooltipContent>
                 </Tooltip>
@@ -57,7 +57,7 @@ export function SegmentationFAB() {
                             )}
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent side="left">
                         <p>Start AI Segmentation</p>
                     </TooltipContent>
                 </Tooltip>
