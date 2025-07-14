@@ -18,6 +18,7 @@ interface AnalysisState {
   isCineMode: boolean;
   brightness: number;
   contrast: number;
+  sliceThickness: number;
   histogramData: HistogramData[];
   profileCurveData: ProfileCurveData[];
   showMetadataViewer: boolean;
@@ -29,6 +30,7 @@ interface AnalysisState {
   setIsCineMode: (value: boolean) => void;
   setBrightness: (value: number) => void;
   setContrast: (value: number) => void;
+  setSliceThickness: (value: number) => void;
   setHistogramData: (data: HistogramData[]) => void;
   setProfileCurveData: (data: ProfileCurveData[]) => void;
   setShowMetadataViewer: (value: boolean) => void;
@@ -43,6 +45,7 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   isCineMode: false,
   brightness: 50,
   contrast: 50,
+  sliceThickness: 1,
   histogramData: [],
   profileCurveData: [],
   showMetadataViewer: false,
@@ -54,6 +57,7 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   setIsCineMode: (value) => set({ isCineMode: value }),
   setBrightness: (value) => set({ brightness: value }),
   setContrast: (value) => set({ contrast: value }),
+  setSliceThickness: (value) => set({ sliceThickness: value }),
   setHistogramData: (data) => set({ histogramData: data }),
   setProfileCurveData: (data) => set({ profileCurveData: data }),
   setShowMetadataViewer: (value) => set({ showMetadataViewer: value }),

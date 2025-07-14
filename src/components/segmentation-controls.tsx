@@ -10,6 +10,7 @@ import {
   GitCompareArrows,
   Download,
   FileText,
+  Sparkles,
 } from 'lucide-react';
 import {
   Card,
@@ -39,10 +40,12 @@ export function SegmentationControls() {
     showProfileCurves,
     brightness,
     contrast,
+    sliceThickness,
     setShowHistogram,
     setShowProfileCurves,
     setBrightness,
     setContrast,
+    setSliceThickness,
     setShowMetadataViewer
   } = useAnalysisStore();
 
@@ -68,6 +71,17 @@ export function SegmentationControls() {
     const value = parseInt(event.target.value, 10);
      if (!isNaN(value)) {
       setBrightness(Math.max(0, Math.min(100, value)));
+    }
+  };
+
+  const handleSliceThicknessSliderChange = (value: number[]) => {
+    setSliceThickness(value[0]);
+  };
+
+  const handleSliceThicknessInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(event.target.value);
+    if (!isNaN(value)) {
+      setSliceThickness(Math.max(1, Math.min(10, value)));
     }
   };
 
@@ -134,7 +148,8 @@ export function SegmentationControls() {
               <Label>Slice Thickness</Label>
               <div className="flex items-center gap-2">
                 <Slider
-                  defaultValue={[1]}
+                  value={[sliceThickness]}
+                  onValueChange={handleSliceThicknessSliderChange}
                   min={1}
                   max={10}
                   step={0.5}
@@ -142,7 +157,8 @@ export function SegmentationControls() {
                 />
                 <Input
                   type="number"
-                  defaultValue={1}
+                  value={sliceThickness}
+                  onChange={handleSliceThicknessInputChange}
                   min={1}
                   max={10}
                   step={0.5}
