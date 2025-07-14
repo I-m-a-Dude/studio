@@ -7,11 +7,13 @@ interface ViewState {
   maxSlices: Record<ViewAxis, number>;
   axis: ViewAxis;
   zoom: number;
+  pan: { x: number; y: number };
   setSlice: (slice: number | ((prevSlice: number) => number)) => void;
   setAxis: (axis: ViewAxis) => void;
   setMaxSlices: (maxSlices: Record<ViewAxis, number>) => void;
   zoomIn: () => void;
   zoomOut: () => void;
+  setPan: (pan: { x: number; y: number }) => void;
   resetView: () => void;
 }
 
@@ -20,6 +22,7 @@ export const useViewStore = create<ViewState>((set, get) => ({
   maxSlices: { axial: 0, sagittal: 0, coronal: 0 },
   axis: 'axial',
   zoom: 1,
+  pan: { x: 0, y: 0 },
   setSlice: (slice) => {
     if (typeof slice === 'function') {
       set((state) => ({ slice: slice(state.slice) }));
@@ -38,8 +41,9 @@ export const useViewStore = create<ViewState>((set, get) => ({
   },
   zoomIn: () => set((state) => ({ zoom: Math.min(state.zoom * 1.1, 5) })),
   zoomOut: () => set((state) => ({ zoom: Math.max(state.zoom / 1.1, 0.2) })),
+  setPan: (pan) => set({ pan }),
   resetView: () => {
     const { maxSlices, axis } = get();
-    set({ zoom: 1, slice: Math.floor(maxSlices[axis] / 2) });
+    set({ zoom: 1, pan: { x: 0, y: 0 }, slice: Math.floor(maxSlices[axis] / 2) });
   },
 }));

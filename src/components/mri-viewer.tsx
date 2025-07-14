@@ -9,6 +9,7 @@ import { useAnalysisStore } from '@/stores/analysis-store';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle } from 'lucide-react';
 import { ViewerToolbar } from './viewer-toolbar';
+import { cn } from '@/lib/utils';
 
 // From nifti-reader-js, because the export is problematic.
 const NIFTI_DATA_TYPE_MAP: Record<number, string> = {
@@ -38,7 +39,7 @@ function getDataType(code: number): string {
 
 export function MriViewer() {
   const file = useMriStore((state) => state.file);
-  const { slice, zoom, axis, setMaxSlices, zoomIn, zoomOut } = useViewStore();
+  const { slice, zoom, axis, pan, setPan, setMaxSlices, zoomIn, zoomOut } = useViewStore();
   const { setHistogramData, setProfileCurveData, setMetadata } = useAnalysisStore();
 
   const [niftiHeader, setNiftiHeader] = useState<nifti.NIFTI1 | nifti.NIFTI2 | null>(null);
@@ -46,6 +47,10 @@ export function MriViewer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+
 
   const calculateAndSetChartData = (
     header: nifti.NIFTI1 | nifti.NIFTI2,
@@ -220,7 +225,7 @@ export function MriViewer() {
     if (!loading && !error && niftiHeader) {
       drawSlice(slice, axis);
     }
-  }, [slice, axis, loading, error, niftiHeader, niftiImage, zoom]);
+  }, [slice, axis, loading, error, niftiHeader, niftiImage]);
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -230,6 +235,35 @@ export function MriViewer() {
       zoomOut();
     }
   };
+  
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return; // Only pan on left-click
+    e.preventDefault();
+    setIsPanning(true);
+    setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+  };
+  
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isPanning) return;
+    e.preventDefault();
+    setPan({
+      x: e.clientX - panStart.x,
+      y: e.clientY - panStart.y,
+    });
+  };
+
+  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isPanning) return;
+    e.preventDefault();
+    setIsPanning(false);
+  };
+
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isPanning) {
+      handleMouseUp(e);
+    }
+  };
+
 
   const renderContent = () => {
     if (loading) {
@@ -252,7 +286,10 @@ export function MriViewer() {
             <canvas 
                 ref={canvasRef}
                 className="transition-transform duration-200"
-                style={{ transform: `scale(${zoom})`, imageRendering: 'pixelated' }}
+                style={{ 
+                    transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, 
+                    imageRendering: 'pixelated' 
+                }}
             />
             <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
                 Slice: {slice + 1} / {useViewStore.getState().maxSlices[axis]}
@@ -270,8 +307,15 @@ export function MriViewer() {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-4 gap-4 bg-black rounded-lg">
       <div
-        className="relative w-full max-w-[512px] aspect-square overflow-hidden rounded-md border border-border bg-black flex items-center justify-center"
+        className={cn(
+            "relative w-full max-w-[512px] aspect-square overflow-hidden rounded-md border border-border bg-black flex items-center justify-center",
+             isPanning ? 'cursor-grabbing' : 'cursor-grab'
+        )}
         onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
       >
         {renderContent()}
       </div>
