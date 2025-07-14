@@ -50,6 +50,7 @@ export function MriViewer() {
   
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const animationFrameRef = useRef<number | null>(null);
 
 
   const calculateAndSetChartData = (
@@ -246,9 +247,14 @@ export function MriViewer() {
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isPanning) return;
     e.preventDefault();
-    setPan({
-      x: e.clientX - panStart.x,
-      y: e.clientY - panStart.y,
+    if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+    }
+    animationFrameRef.current = requestAnimationFrame(() => {
+        setPan({
+            x: e.clientX - panStart.x,
+            y: e.clientY - panStart.y,
+        });
     });
   };
 
@@ -256,6 +262,9 @@ export function MriViewer() {
     if (!isPanning) return;
     e.preventDefault();
     setIsPanning(false);
+    if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+    }
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
