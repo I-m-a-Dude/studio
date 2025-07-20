@@ -19,6 +19,9 @@ export default function HomePage() {
           <MriUploader />
         </div>
       </main>
+      <footer className="p-4 text-center text-sm text-muted-foreground">
+        Made by Tudor Ioan Fărcaș
+      </footer>
     </div>
   );
 }
