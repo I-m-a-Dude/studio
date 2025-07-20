@@ -16,6 +16,7 @@ export default function AnalysisPage() {
       <header className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
         <Logo />
         <div className="flex items-center gap-4">
+          <Button className="rounded-full">Generate Result</Button>
           <Button variant="outline" asChild className="rounded-full">
               <Link href="/">
                 Back to Upload
