@@ -57,6 +57,16 @@ export function MriUploader() {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 1) {
+      toast({
+        title: 'Multiple Files Not Allowed',
+        description: 'Please upload only one file at a time.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const droppedFile = e.dataTransfer.files[0];
     handleFile(droppedFile);
   };
