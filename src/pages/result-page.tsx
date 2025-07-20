@@ -13,19 +13,25 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { pages } from '@/utils/pages';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useMriStore } from '@/utils/stores/mri-store';
 
 export default function ResultPage() {
   useCineMode();
-  const { analysisResult } = useResultStore();
+  const { analysisResult, fileName } = useResultStore();
+  const { file } = useMriStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (!analysisResult) {
-      // Redirect back to analysis if there's no result to show
+    // If there is no analysis result OR the result is for a different file, redirect.
+    if (!analysisResult || (file && fileName !== file.name)) {
       router.replace(pages.analysis);
     }
-  }, [analysisResult, router]);
+  }, [analysisResult, fileName, file, router]);
 
+  // Render a loading state or null while redirecting to avoid flashing content
+  if (!analysisResult || (file && fileName !== file.name)) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">

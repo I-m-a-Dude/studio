@@ -24,6 +24,16 @@ export default function AnalysisPage() {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const hasResultForCurrentFile = analysisResult && fileName === file?.name;
+
+  const handleButtonClick = () => {
+    if (hasResultForCurrentFile) {
+      router.push(pages.result);
+    } else {
+      generateAnalysis();
+    }
+  };
+
   const generateAnalysis = async () => {
     if (!file) {
       toast({
@@ -31,12 +41,6 @@ export default function AnalysisPage() {
         description: 'Please upload an MRI file first.',
         variant: 'destructive',
       });
-      return;
-    }
-
-    // Check if a result for the current file already exists
-    if (analysisResult && fileName === file.name) {
-      router.push(pages.result);
       return;
     }
 
@@ -48,9 +52,8 @@ export default function AnalysisPage() {
       setAnalysisResult(result.analysis, file.name);
       toast({
         title: 'Analysis Complete',
-        description: 'Redirecting to results page...',
+        description: 'You can now view the result.',
       });
-      router.push(pages.result);
     } catch (error) {
       console.error('Analysis failed:', error);
       toast({
@@ -64,20 +67,28 @@ export default function AnalysisPage() {
     }
   };
 
+  const getButtonContent = () => {
+    if (isGenerating) {
+      return (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Generating...
+        </>
+      );
+    }
+    if (hasResultForCurrentFile) {
+      return 'View Result';
+    }
+    return 'Generate Result';
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
       <header className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
         <Logo />
         <div className="flex items-center gap-4">
-          <Button onClick={generateAnalysis} disabled={isGenerating} className="rounded-full">
-            {isGenerating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              'Generate Result'
-            )}
+          <Button onClick={handleButtonClick} disabled={isGenerating} className="rounded-full">
+            {getButtonContent()}
           </Button>
           <Button variant="outline" asChild className="rounded-full">
               <Link href="/">
