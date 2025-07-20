@@ -3,7 +3,7 @@
 import { useViewStore, type ViewAxis } from '@/stores/view-store';
 import { useAnalysisStore } from '@/stores/analysis-store';
 import { Button } from '@/components/ui/button';
-import { ZoomIn, ZoomOut, Move, RotateCcw, Scan, Play, Pause } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Scan, Play, Pause } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMriStore } from '@/stores/mri-store';
@@ -59,10 +59,6 @@ export function ViewerToolbar() {
             <Button variant="outline" size="icon" onClick={zoomOut} disabled={isDisabled}>
             <ZoomOut className="h-4 w-4" />
             <span className="sr-only">Zoom Out</span>
-            </Button>
-            <Button variant="outline" size="icon" disabled={isDisabled}>
-            <Move className="h-4 w-4" />
-            <span className="sr-only">Pan</span>
             </Button>
             <Button variant="outline" size="icon" onClick={resetView} disabled={isDisabled}>
             <RotateCcw className="h-4 w-4" />
