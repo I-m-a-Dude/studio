@@ -2,7 +2,7 @@
 
 import { Line, LineChart, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { useAnalysisStore } from '@/stores/analysis-store';
+import { useAnalysisStore } from '@/utils/stores/analysis-store';
 
 export function ProfileCurveChart() {
   const profileCurveData = useAnalysisStore((state) => state.profileCurveData);

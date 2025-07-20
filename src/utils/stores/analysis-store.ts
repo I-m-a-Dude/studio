@@ -1,14 +1,5 @@
 import { create } from 'zustand';
-
-export interface HistogramData {
-  value: number;
-  count: number;
-}
-
-export interface ProfileCurveData {
-    position: number;
-    intensity: number;
-}
+import type { HistogramData, ProfileCurveData } from '@/types/analysis-types';
 
 interface AnalysisState {
   multiPlanarView: boolean;
@@ -43,8 +34,8 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   showHistogram: false,
   showProfileCurves: false,
   isCineMode: false,
-  brightness: 50,
-  contrast: 50,
+  brightness: 100,
+  contrast: 100,
   sliceThickness: 1,
   histogramData: [],
   profileCurveData: [],

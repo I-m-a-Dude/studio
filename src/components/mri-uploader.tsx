@@ -4,9 +4,10 @@ import { useState, type DragEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { UploadCloud, File, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import { useMriStore } from '@/stores/mri-store';
+import { cn } from '@/utils/cn';
+import { useToast } from '@/utils/hooks/use-toast';
+import { useMriStore } from '@/utils/stores/mri-store';
+import { pages } from '@/utils/pages';
 
 export function MriUploader() {
   const setMriFile = useMriStore((state) => state.setFile);
@@ -63,7 +64,7 @@ export function MriUploader() {
   const handleNavigateToAnalysis = () => {
     if (mriFile) {
       setIsNavigating(true);
-      router.push('/analysis');
+      router.push(pages.analysis);
     }
   };
 

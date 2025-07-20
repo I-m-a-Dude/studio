@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-
-export type ViewAxis = 'axial' | 'sagittal' | 'coronal';
+import type { ViewAxis } from '@/types/view-types';
 
 interface ViewState {
   slice: number;

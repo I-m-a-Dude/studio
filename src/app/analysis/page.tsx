@@ -5,7 +5,7 @@ import { SegmentationControls } from '@/components/segmentation-controls';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useCineMode } from '@/hooks/use-cine-mode';
+import { useCineMode } from '@/utils/hooks/use-cine-mode';
 import { MetadataViewerDialog } from '@/components/metadata-viewer-dialog';
 import { Sparkles } from 'lucide-react';
 

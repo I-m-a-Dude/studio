@@ -1,6 +1,6 @@
 'use client';
 
-import { useAnalysisStore } from '@/stores/analysis-store';
+import { useAnalysisStore } from '@/utils/stores/analysis-store';
 import {
   Box,
   BrainCircuit,
@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { useMriStore } from '@/stores/mri-store';
+import { useMriStore } from '@/utils/stores/mri-store';
 import { Separator } from './ui/separator';
 import {
   DropdownMenu,

@@ -16,7 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useAnalysisStore } from '@/stores/analysis-store';
+import { useAnalysisStore } from '@/utils/stores/analysis-store';
 import { BrainCircuit } from 'lucide-react';
 
 export function MetadataViewerDialog() {

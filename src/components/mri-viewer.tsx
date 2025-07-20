@@ -3,39 +3,14 @@
 import { useState, useEffect, useRef } from 'react';
 import * as nifti from 'nifti-reader-js';
 import pako from 'pako';
-import { useMriStore } from '@/stores/mri-store';
-import { useViewStore, type ViewAxis } from '@/stores/view-store';
-import { useAnalysisStore } from '@/stores/analysis-store';
+import { useMriStore } from '@/utils/stores/mri-store';
+import { useViewStore } from '@/utils/stores/view-store';
+import { useAnalysisStore } from '@/utils/stores/analysis-store';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle } from 'lucide-react';
 import { ViewerToolbar } from './viewer-toolbar';
-import { cn } from '@/lib/utils';
-
-// From nifti-reader-js, because the export is problematic.
-const NIFTI_DATA_TYPE_MAP: Record<number, string> = {
-    0: 'NONE',
-    1: 'BINARY',
-    2: 'UINT8',
-    4: 'INT16',
-    8: 'INT32',
-    16: 'FLOAT32',
-    32: 'COMPLEX64',
-    64: 'FLOAT64',
-    128: 'RGB24',
-    255: 'ALL',
-    256: 'INT8',
-    512: 'UINT16',
-    768: 'UINT32',
-    1024: 'INT64',
-    1280: 'UINT64',
-    1536: 'FLOAT128',
-    1792: 'COMPLEX128',
-    2048: 'COMPLEX256',
-};
-function getDataType(code: number): string {
-    return NIFTI_DATA_TYPE_MAP[code] || 'UNKNOWN';
-}
-
+import { cn } from '@/utils/cn';
+import { getDataType, calculateAndSetChartData, drawSlice } from '@/utils/mriUtils';
 
 export function MriViewer() {
   const file = useMriStore((state) => state.file);
@@ -57,45 +32,6 @@ export function MriViewer() {
   
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
-
-
-  const calculateAndSetChartData = (
-    header: nifti.NIFTI1 | nifti.NIFTI2,
-    image: ArrayBuffer
-  ) => {
-    // This is a simplified calculation for demonstration
-    // A real implementation would be more complex
-    const typedData = new Float32Array(image);
-
-    // Histogram Data
-    const histogram: { value: number; count: number }[] = [];
-    const intensityMap = new Map<number, number>();
-    const maxVal = header.cal_max > 0 ? header.cal_max : 1;
-    typedData.forEach((val) => {
-      const normalized = Math.round((val / maxVal) * 100);
-      intensityMap.set(normalized, (intensityMap.get(normalized) || 0) + 1);
-    });
-    intensityMap.forEach((count, value) => {
-      if (value >= 0 && value <= 100) { // Only show relevant range
-        histogram.push({ value, count });
-      }
-    });
-    setHistogramData(histogram.sort((a,b) => a.value - b.value));
-
-    // Profile Curve Data (horizontal line through middle of axial view)
-    const profile: { position: number; intensity: number }[] = [];
-    const dims = header.dims;
-    const middleSlice = Math.floor(dims[3] / 2);
-    const middleRow = Math.floor(dims[2] / 2);
-    const sliceSize = dims[1] * dims[2];
-
-    for (let i = 0; i < dims[1]; i++) {
-        const voxelIndex = i + (middleRow * dims[1]) + (middleSlice * sliceSize);
-        const pixelData = new Float32Array(image, voxelIndex * 4, 1);
-        profile.push({ position: i, intensity: pixelData[0] });
-    }
-    setProfileCurveData(profile);
-  };
 
   useEffect(() => {
     const loadNiftiFile = async () => {
@@ -127,7 +63,7 @@ export function MriViewer() {
             coronal: header.dims[2],
           });
           
-          calculateAndSetChartData(header, image);
+          calculateAndSetChartData(header, image, setHistogramData, setProfileCurveData);
           setMetadata({
             'Description': header.description,
             'Dimensions': header.dims,
@@ -166,92 +102,19 @@ export function MriViewer() {
     loadNiftiFile();
   }, [file, setMaxSlices, setHistogramData, setProfileCurveData, setMetadata]);
   
-  const drawSlice = (currentSlice: number, currentAxis: ViewAxis) => {
-    if (!niftiHeader || !niftiImage || !canvasRef.current) return;
-
-    const dims = niftiHeader.dims;
-    let cols, rows, maxSliceForAxis;
-    
-    if (currentAxis === 'axial') { // Z
-        cols = dims[1];
-        rows = dims[2];
-        maxSliceForAxis = dims[3];
-    } else if (currentAxis === 'coronal') { // Y
-        cols = dims[1];
-        rows = dims[3];
-        maxSliceForAxis = dims[2];
-    } else { // Sagittal / X
-        cols = dims[2];
-        rows = dims[3];
-        maxSliceForAxis = dims[1];
-    }
-
-    const canvas = canvasRef.current;
-    canvas.width = cols;
-    canvas.height = rows;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    // Apply brightness and contrast
-    // 50 is default (100%), 0 is 0%, 100 is 200%
-    ctx.filter = `brightness(${brightness / 50}) contrast(${contrast / 50})`;
-    
-    const imageData = ctx.createImageData(cols, rows);
-
-    let maxVal = niftiHeader.cal_max;
-    if (maxVal === 0) {
-        // Fallback for calculating max value if not in header
-        const typedData = new Float32Array(niftiImage);
-        maxVal = typedData.reduce((max, current) => Math.max(max, current), -Infinity);
-    }
-    if (maxVal === 0) maxVal = 1; // Avoid division by zero
-
-    const sliceSize = dims[1] * dims[2];
-    const thickness = Math.floor(sliceThickness);
-    const halfThickness = Math.floor(thickness / 2);
-    
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < cols; j++) {
-            let totalValue = 0;
-            let count = 0;
-
-            for(let t = -halfThickness; t <= halfThickness; t++) {
-                const sliceToSample = Math.round(currentSlice) + t;
-                if (sliceToSample < 0 || sliceToSample >= maxSliceForAxis) continue;
-
-                let voxelIndex;
-                if (currentAxis === 'axial') {
-                    voxelIndex = j + (i * dims[1]) + (sliceToSample * sliceSize);
-                } else if (currentAxis === 'coronal') {
-                    voxelIndex = j + (sliceToSample * dims[1]) + (i * sliceSize);
-                } else { // sagittal
-                    voxelIndex = sliceToSample + (j * dims[1]) + (i * sliceSize);
-                }
-                
-                // This assumes Float32 data type for simplicity
-                const pixelData = new Float32Array(niftiImage, voxelIndex * 4, 1);
-                totalValue += pixelData[0];
-                count++;
-            }
-            
-            const avgValue = count > 0 ? totalValue / count : 0;
-            const value = Math.round(Math.abs(avgValue / maxVal) * 255);
-            const pixelOffset = (i * cols + j) * 4;
-
-            imageData.data[pixelOffset] = value;
-            imageData.data[pixelOffset + 1] = value;
-            imageData.data[pixelOffset + 2] = value;
-            imageData.data[pixelOffset + 3] = 255;
-        }
-    }
-    
-    ctx.putImageData(imageData, 0, 0);
-  };
   
   useEffect(() => {
-    if (!loading && !error && niftiHeader) {
-      drawSlice(slice, axis);
+    if (!loading && !error && niftiHeader && niftiImage && canvasRef.current) {
+      drawSlice({
+        canvas: canvasRef.current,
+        header: niftiHeader,
+        image: niftiImage,
+        slice,
+        axis,
+        brightness,
+        contrast,
+        sliceThickness,
+      });
     }
   }, [slice, axis, loading, error, niftiHeader, niftiImage, brightness, contrast, sliceThickness]);
 

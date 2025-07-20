@@ -1,12 +1,13 @@
 'use client';
 
-import { useViewStore, type ViewAxis } from '@/stores/view-store';
-import { useAnalysisStore } from '@/stores/analysis-store';
+import { useViewStore } from '@/utils/stores/view-store';
+import { useAnalysisStore } from '@/utils/stores/analysis-store';
 import { Button } from '@/components/ui/button';
 import { ZoomIn, ZoomOut, RotateCcw, Scan, Play, Pause } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useMriStore } from '@/stores/mri-store';
+import { useMriStore } from '@/utils/stores/mri-store';
+import { ViewAxis } from '@/types/view-types';
 
 export function ViewerToolbar() {
   const { 
