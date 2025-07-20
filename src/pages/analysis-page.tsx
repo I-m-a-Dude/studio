@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { MriViewer } from '@/components/mri-viewer';
 import { SegmentationControls } from '@/components/segmentation-controls';
 import { Logo } from '@/components/logo';
@@ -7,16 +8,66 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useCineMode } from '@/utils/hooks/use-cine-mode';
 import { MetadataViewerDialog } from '@/components/metadata-viewer-dialog';
+import { useMriStore } from '@/utils/stores/mri-store';
+import { useToast } from '@/utils/hooks/use-toast';
+import { generateMriAnalysis } from '@/utils/api';
+import { Loader2 } from 'lucide-react';
 
 export default function AnalysisPage() {
   useCineMode();
+  const { file } = useMriStore();
+  const { toast } = useToast();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+
+  const generateAnalysis = async () => {
+    if (!file) {
+      toast({
+        title: 'No file selected',
+        description: 'Please upload an MRI file first.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    setAnalysisResult(null);
+
+    try {
+      const result = await generateMriAnalysis(file, 'Check for anomalies');
+      setAnalysisResult(result.analysis);
+      toast({
+        title: 'Analysis Complete',
+        description: 'AI analysis has been successfully generated.',
+      });
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      toast({
+        title: 'Analysis Failed',
+        description:
+          'Something went wrong while generating the analysis. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
       <header className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
         <Logo />
         <div className="flex items-center gap-4">
-          <Button className="rounded-full">Generate Result</Button>
+          <Button onClick={generateAnalysis} disabled={isGenerating} className="rounded-full">
+            {isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              'Generate Result'
+            )}
+          </Button>
           <Button variant="outline" asChild className="rounded-full">
               <Link href="/">
                 Back to Upload

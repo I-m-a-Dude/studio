@@ -10,7 +10,6 @@ import {
   GitCompareArrows,
   Download,
   FileText,
-  Sparkles,
 } from 'lucide-react';
 import {
   Card,
