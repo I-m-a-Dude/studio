@@ -20,7 +20,7 @@ export default function HomePage() {
         </div>
       </main>
       <footer className="p-4 text-center text-sm text-muted-foreground">
-        Made by Tudor Ioan Fărcaș
+        &copy; Made by Tudor Ioan Fărcaș
       </footer>
     </div>
   );
