@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { MriViewer } from '@/components/mri-viewer';
 import { SegmentationControls } from '@/components/segmentation-controls';
 import { Logo } from '@/components/logo';
@@ -12,13 +13,16 @@ import { useMriStore } from '@/utils/stores/mri-store';
 import { useToast } from '@/utils/hooks/use-toast';
 import { generateMriAnalysis } from '@/utils/api';
 import { Loader2 } from 'lucide-react';
+import { pages } from '@/utils/pages';
+import { useResultStore } from '@/utils/stores/result-store';
 
 export default function AnalysisPage() {
   useCineMode();
+  const router = useRouter();
   const { file } = useMriStore();
+  const { setAnalysisResult } = useResultStore();
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
 
   const generateAnalysis = async () => {
     if (!file) {
@@ -38,8 +42,9 @@ export default function AnalysisPage() {
       setAnalysisResult(result.analysis);
       toast({
         title: 'Analysis Complete',
-        description: 'AI analysis has been successfully generated.',
+        description: 'Redirecting to results page...',
       });
+      router.push(pages.result);
     } catch (error) {
       console.error('Analysis failed:', error);
       toast({
