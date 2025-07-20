@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useCineMode } from '@/utils/hooks/use-cine-mode';
 import { MetadataViewerDialog } from '@/components/metadata-viewer-dialog';
-import { Sparkles } from 'lucide-react';
 
 export default function AnalysisPage() {
   useCineMode();
@@ -17,10 +16,6 @@ export default function AnalysisPage() {
       <header className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
         <Logo />
         <div className="flex items-center gap-4">
-          <Button variant="default" className="rounded-full">
-            <Sparkles className="mr-2 h-4 w-4" />
-            AI Segmentation
-          </Button>
           <Button variant="outline" asChild className="rounded-full">
               <Link href="/">
                 Back to Upload
