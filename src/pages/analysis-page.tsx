@@ -20,7 +20,7 @@ export default function AnalysisPage() {
   useCineMode();
   const router = useRouter();
   const { file } = useMriStore();
-  const { setAnalysisResult } = useResultStore();
+  const { analysisResult, fileName, setAnalysisResult } = useResultStore();
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -34,12 +34,18 @@ export default function AnalysisPage() {
       return;
     }
 
+    // Check if a result for the current file already exists
+    if (analysisResult && fileName === file.name) {
+      router.push(pages.result);
+      return;
+    }
+
     setIsGenerating(true);
-    setAnalysisResult(null);
+    setAnalysisResult(null, null);
 
     try {
       const result = await generateMriAnalysis(file, 'Check for anomalies');
-      setAnalysisResult(result.analysis);
+      setAnalysisResult(result.analysis, file.name);
       toast({
         title: 'Analysis Complete',
         description: 'Redirecting to results page...',

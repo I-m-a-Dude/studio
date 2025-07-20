@@ -2,10 +2,12 @@ import { create } from 'zustand';
 
 interface ResultState {
   analysisResult: string | null;
-  setAnalysisResult: (result: string | null) => void;
+  fileName: string | null;
+  setAnalysisResult: (result: string | null, fileName: string | null) => void;
 }
 
 export const useResultStore = create<ResultState>((set) => ({
   analysisResult: null,
-  setAnalysisResult: (result) => set({ analysisResult: result }),
+  fileName: null,
+  setAnalysisResult: (result, fileName) => set({ analysisResult: result, fileName: fileName }),
 }));

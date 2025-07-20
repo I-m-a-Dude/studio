@@ -8,10 +8,12 @@ import { cn } from '@/utils/cn';
 import { useToast } from '@/utils/hooks/use-toast';
 import { useMriStore } from '@/utils/stores/mri-store';
 import { pages } from '@/utils/pages';
+import { useResultStore } from '@/utils/stores/result-store';
 
 export function MriUploader() {
   const setMriFile = useMriStore((state) => state.setFile);
   const mriFile = useMriStore((state) => state.file);
+  const setAnalysisResult = useResultStore((state) => state.setAnalysisResult);
   
   const [isDragging, setIsDragging] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -22,6 +24,8 @@ export function MriUploader() {
     if (selectedFile) {
       if (selectedFile.name.endsWith('.nii') || selectedFile.name.endsWith('.nii.gz')) {
         setMriFile(selectedFile);
+        // Clear any previous analysis result when a new file is uploaded
+        setAnalysisResult(null, null);
       } else {
         toast({
           title: 'Invalid File Type',
@@ -59,6 +63,8 @@ export function MriUploader() {
 
   const handleRemoveFile = () => {
     setMriFile(null);
+    // Clear any previous analysis result when the file is removed
+    setAnalysisResult(null, null);
   };
 
   const handleNavigateToAnalysis = () => {
