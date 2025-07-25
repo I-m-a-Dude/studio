@@ -1,5 +1,10 @@
 'use client';
 
+// For Vite + React with react-router-dom, you would use:
+// import { useNavigate } from 'react-router-dom';
+// const navigate = useNavigate();
+// navigate(pages.analysis);
+
 import { useState, type DragEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { UploadCloud, File, X, Loader2 } from 'lucide-react';

@@ -1,5 +1,11 @@
 'use client';
 
+// For Vite + React with react-router-dom, you would use:
+// import { Link, useNavigate, useLocation } from 'react-router-dom';
+// const navigate = useNavigate();
+// navigate('/analysis', { replace: true });
+// <Link to={pages.analysis}>...</Link>
+
 import { MriViewer } from '@/components/mri-viewer';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
